@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>2048</title>
+    <script src="main.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body onload="newGame()" onkeypress="moveTiles(event)">
+    <header>
+        <h1>2048</h1>
+        <input type="button" value="New Game" onclick="newGame()">
+        <h3 id="score">Score: 0</h3>
+    </header>
+    <main>
+        <table id="game_board">
+        </table>
+    </main>
+</body>
+</html> 
