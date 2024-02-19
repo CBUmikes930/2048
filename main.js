@@ -1,3 +1,5 @@
+const default_color = "#acbff3"
+
 let game_data = []
 
 score = 0
@@ -6,7 +8,7 @@ function newGame() {
     // Get the game board (table) element
     let game_board = document.getElementById("game_board")
     // Clear the previous gameboard
-    game_board.innerHTML = ''
+    game_board.innerHTML = ""
     game_data = []
     // For the selected number of rows/cols
     for (let i = 0; i < 4; i++) {
@@ -18,7 +20,9 @@ function newGame() {
             col = document.createElement("td")
             // Assign an ID with the given grid coords
             col.setAttribute("id", j + "-" + i)
-            col.style.backgroundColor = "#acbff3"
+            col.style.backgroundColor = default_color
+            col.style.top = (85 * i) + "px"
+            col.style.left = (85 * j) + "px"
             // Add the new cell to the row
             row.appendChild(col)
             game_data[i][j] = 0
@@ -47,6 +51,18 @@ function addNewTile() {
         game_data[x][y] = number
         document.getElementById(y + "-" + x).innerHTML = number
         document.getElementById(y + "-" + x).style.backgroundColor = getColor(number)
+        document.getElementById(y + "-" + x).style.color = "#00000000"
+        
+        let opactiy = 0
+        let id = setInterval(frame, 5)
+        function frame() {
+            if (opactiy >= 255) {
+                clearInterval(id)
+            } else {
+                document.getElementById(y + "-" + x).style.color = "#000000" + opactiy.toString(16)
+                opactiy += 10
+            }
+        }
     }
 }
 
@@ -62,6 +78,8 @@ function moveTiles(e) {
                         col[col.length - 1] += game_data[j][i]
                         did_combine = true
                         score += col[col.length - 1]
+                        
+                        combinedAnimation(document.getElementById(i + "-" + (col.length - 1)))
                     } else if (game_data[j][i] > 0) {
                         col.push(game_data[j][i])
                         did_combine = false
@@ -70,7 +88,7 @@ function moveTiles(e) {
                 for (let j = 0; j < 4; j++) {
                     let number = col[j] ? col[j] : 0
                     game_data[j][i] = number
-                    document.getElementById(i + "-" + j).innerHTML = number > 0 ? number : ''
+                    document.getElementById(i + "-" + j).innerHTML = number > 0 ? number : ""
                     document.getElementById(i + "-" + j).style.backgroundColor = getColor(number)
                 }
             }
@@ -84,6 +102,8 @@ function moveTiles(e) {
                         col[col.length - 1] += game_data[i][j]
                         did_combine = true
                         score += col[col.length - 1]
+                        
+                        combinedAnimation(document.getElementById((col.length - 1) + "-" + i))
                     } else if (game_data[i][j] > 0) {
                         col.push(game_data[i][j])
                         did_combine = false
@@ -92,7 +112,7 @@ function moveTiles(e) {
                 for (let j = 0; j < 4; j++) {
                     let number = col[j] ? col[j] : 0
                     game_data[i][j] = number
-                    document.getElementById(j + "-" + i).innerHTML = number > 0 ? number : ''
+                    document.getElementById(j + "-" + i).innerHTML = number > 0 ? number : ""
                     document.getElementById(j + "-" + i).style.backgroundColor = getColor(number)
                 }
             }
@@ -106,6 +126,8 @@ function moveTiles(e) {
                         col[col.length - 1] += game_data[j][i]
                         did_combine = true
                         score += col[col.length - 1]
+                        
+                        combinedAnimation(document.getElementById(i + "-" + (4 - col.length)))
                     } else if (game_data[j][i] > 0) {
                         col.push(game_data[j][i])
                         did_combine = false
@@ -115,7 +137,7 @@ function moveTiles(e) {
                 for (let j = 3; j >= 0; j--) {
                     let number = col[index] ? col[index++] : 0
                     game_data[j][i] = number
-                    document.getElementById(i + "-" + j).innerHTML = number > 0 ? number : ''
+                    document.getElementById(i + "-" + j).innerHTML = number > 0 ? number : ""
                     document.getElementById(i + "-" + j).style.backgroundColor = getColor(number)
                 }
             }
@@ -129,6 +151,8 @@ function moveTiles(e) {
                         col[col.length - 1] += game_data[i][j]
                         did_combine = true
                         score += col[col.length - 1]
+                        
+                        combinedAnimation(document.getElementById((4 - col.length) + "-" + i))
                     } else if (game_data[i][j] > 0) {
                         col.push(game_data[i][j])
                         did_combine = false
@@ -138,7 +162,7 @@ function moveTiles(e) {
                 for (let j = 3; j >= 0; j--) {
                     let number = col[index] ? col[index++] : 0
                     game_data[i][j] = number
-                    document.getElementById(j + "-" + i).innerHTML = number > 0 ? number : ''
+                    document.getElementById(j + "-" + i).innerHTML = number > 0 ? number : ""
                     document.getElementById(j + "-" + i).style.backgroundColor = getColor(number)
                 }
             }
@@ -157,7 +181,7 @@ function updateScore() {
 }
 
 function getColor(number) {
-    if (number == 0) return "#acbff3"
+    if (number == 0) return default_color
     let comps = [172, 191, 243]
 
     let x = 1
@@ -165,11 +189,26 @@ function getColor(number) {
         x++
     }
 
-    console.log(comps)
     comps[0] = Math.floor(comps[0] * Math.pow(0.9, x)).toString(16)
     comps[1] = Math.floor(comps[1] * Math.pow(0.9, x)).toString(16)
     comps[2] = (comps[2] - (x * 1)).toString(16)
-    console.log(comps)
-    console.log(comps.join(''))
-    return "#" + comps.join('')
+    return "#" + comps.join("")
+}
+
+function combinedAnimation(target) {
+    let x = 0
+    let scale = 75
+    let id = setInterval(frame, 5)
+    function frame() {
+        if (x >= 180) {
+            target.style.height = scale + "px"
+            target.style.width = scale + "px"
+            clearInterval(id)
+        } else {
+            let radians = x * Math.PI / 180
+            x += 10
+            target.style.height = scale * (1 + 0.1 * Math.sin(radians)) + "px"
+            target.style.width = scale * (1 + 0.1 * Math.sin(radians)) + "px"
+        }
+    }
 }
